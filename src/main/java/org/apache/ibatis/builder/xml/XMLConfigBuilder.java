@@ -103,20 +103,34 @@ public class XMLConfigBuilder extends BaseBuilder {
   private void parseConfiguration(XNode root) {
     try {
       // issue #117 read properties first
+      // #mark 解析 properties 配置
       propertiesElement(root.evalNode("properties"));
+      // #mark 解析 settings 配置,并将其转换成 Properties对象
       Properties settings = settingsAsProperties(root.evalNode("settings"));
+      // 加载 vfs
       loadCustomVfs(settings);
+      // 加载自定义 Log 配置
       loadCustomLogImpl(settings);
+      // 解析 typeAliases 配置
       typeAliasesElement(root.evalNode("typeAliases"));
+      // 解析 plugins 配置
       pluginElement(root.evalNode("plugins"));
+      // 解析 objectFactory 配置
       objectFactoryElement(root.evalNode("objectFactory"));
+      // 解析 objectWrapperFactory 配置
       objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
+      // 解析 reflectorFactory 配置
       reflectorFactoryElement(root.evalNode("reflectorFactory"));
+      // settings 中的信息设置到 Configuration 对象中
       settingsElement(settings);
       // read it after objectFactory and objectWrapperFactory issue #631
+      // 解析 environments 配置
       environmentsElement(root.evalNode("environments"));
+      // 解析 databaseIdProvider，获取并设置 databaseId 到 Configuration 对象
       databaseIdProviderElement(root.evalNode("databaseIdProvider"));
+      // 解析 typeHandlers 配置
       typeHandlerElement(root.evalNode("typeHandlers"));
+      // 解析 mappers 配置
       mapperElement(root.evalNode("mappers"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);
@@ -225,6 +239,7 @@ public class XMLConfigBuilder extends BaseBuilder {
       String resource = context.getStringAttribute("resource");
       String url = context.getStringAttribute("url");
       if (resource != null && url != null) {
+        // 这里规定 properties 标签下 resource属性和url属性不能同时存在
         throw new BuilderException("The properties element cannot specify both a URL and a resource based property file reference.  Please specify one or the other.");
       }
       if (resource != null) {

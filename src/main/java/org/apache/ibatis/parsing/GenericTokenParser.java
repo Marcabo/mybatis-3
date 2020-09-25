@@ -20,7 +20,9 @@ package org.apache.ibatis.parsing;
  */
 public class GenericTokenParser {
 
+  // 开始的 Token
   private final String openToken;
+  // 结束的 Token
   private final String closeToken;
   private final TokenHandler handler;
 
@@ -35,36 +37,53 @@ public class GenericTokenParser {
       return "";
     }
     // search open token
+    // 寻找开始的 openToken 的位置
     int start = text.indexOf(openToken);
     if (start == -1) {
       return text;
     }
     char[] src = text.toCharArray();
-    int offset = 0;
+    int offset = 0; // 起始查找的位置
+    // 结果
     final StringBuilder builder = new StringBuilder();
-    StringBuilder expression = null;
+    StringBuilder expression = null; // 匹配到的 openToken 和 endToken之间的表达式
     do {
       if (start > 0 && src[start - 1] == '\\') {
         // this open token is escaped. remove the backslash and continue.
+        // 因为 openToken 前面一个位置是 \ 转义字符，所以忽略 \
+        // 添加 [offset, start - offset - 1] 和 openToken 的内容，添加到 builder 中
         builder.append(src, offset, start - offset - 1).append(openToken);
+        // 修改 offset
         offset = start + openToken.length();
       } else {
+        // 非转义字符
         // found open token. let's search close token.
+        // 创建/重置 expression 对象
         if (expression == null) {
           expression = new StringBuilder();
         } else {
           expression.setLength(0);
         }
+        // 添加 offset 和 openToken 之间的内容，添加到 builder 中
         builder.append(src, offset, start - offset);
+        // 修改 offset
         offset = start + openToken.length();
+        // 寻找结束的 closeToken 的位置
         int end = text.indexOf(closeToken, offset);
         while (end > -1) {
+          // 转义
           if (end > offset && src[end - 1] == '\\') {
             // this close token is escaped. remove the backslash and continue.
+            // 因为 endToken 前面一个位置是 \ 转义字符，所以忽略 \
+            // 添加 [offset, end - offset - 1] 和 endToken 的内容，添加到 builder 中
             expression.append(src, offset, end - offset - 1).append(closeToken);
+            // 修改 offset
             offset = end + closeToken.length();
+            // 继续，寻找结束的 closeToken 的位置
             end = text.indexOf(closeToken, offset);
           } else {
+            // 非转义
+            // 添加 [offset, end - offset] 的内容，添加到 builder 中
             expression.append(src, offset, end - offset);
             break;
           }

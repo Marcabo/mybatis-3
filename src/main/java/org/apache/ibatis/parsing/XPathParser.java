@@ -46,10 +46,24 @@ import org.xml.sax.SAXParseException;
  */
 public class XPathParser {
 
+  // XML Document 对象
   private final Document document;
+  // 是否校验
   private boolean validation;
+  /**
+   * XML 实体解析器
+   * <br/>
+   * org.xml.sax.EntityResolver 对象，XML 实体解析器。
+   * 默认情况下，对 XML 进行校验时，会基于 XML 文档开始位置指定的 DTD 文件或 XSD 文件。\
+   * 例如说，解析 mybatis-config.xml 配置文件时，会加载 http://mybatis.org/dtd/mybatis-3-config.dtd 这个 DTD 文件。
+   * 但是，如果每个应用启动都从网络加载该 DTD 文件，势必在弱网络下体验非常下，甚至说应用部署在无网络的环境下，还会导致下载不下来，
+   * 那么就会出现 XML 校验失败的情况。所以，在实际场景下，MyBatis 自定义了 EntityResolver 的实现，XMLMapperEntityResolver
+   * 达到使用本地 DTD 文件，从而避免下载网络 DTD 文件的效果。
+   */
   private EntityResolver entityResolver;
+  // 变量Properties 对象
   private Properties variables;
+  // Java XPath 对象
   private XPath xpath;
 
   public XPathParser(String xml) {
@@ -141,7 +155,9 @@ public class XPathParser {
   }
 
   public String evalString(Object root, String expression) {
+    // <1> 获得值
     String result = (String) evaluate(expression, root, XPathConstants.STRING);
+    // <2> 基于 variables 替换动态值，如果 result 为动态值
     result = PropertyParser.parse(result, variables);
     return result;
   }
@@ -153,6 +169,10 @@ public class XPathParser {
   public Boolean evalBoolean(Object root, String expression) {
     return (Boolean) evaluate(expression, root, XPathConstants.BOOLEAN);
   }
+
+  // mybatis 实现了一系列的 eval** 方法.
+  // 用于获得 Boolean、Short、Integer、Long、Float、Double、String、Node 类型的元素或节点的“值”。
+  // 当然，虽然方法很多，但是都是基于 #evaluate(String expression, Object root, QName returnType) 方法
 
   public Short evalShort(String expression) {
     return evalShort(document, expression);
@@ -211,7 +231,7 @@ public class XPathParser {
     return evalNode(document, expression);
   }
 
-  public XNode evalNode(Object root, String expression) {
+  public XNode  evalNode(Object root, String expression) {
     Node node = (Node) evaluate(expression, root, XPathConstants.NODE);
     if (node == null) {
       return null;
@@ -227,12 +247,18 @@ public class XPathParser {
     }
   }
 
+  /**
+   * 创建 Document 对象
+   * @param inputSource
+   * @return
+   */
   private Document createDocument(InputSource inputSource) {
     // important: this must only be called AFTER common constructor
     try {
+      // 创建 DocumentBuilderFactory 对象
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-      factory.setValidating(validation);
+      factory.setValidating(validation); // 设置是否验证 XML 一般是 true
 
       factory.setNamespaceAware(false);
       factory.setIgnoringComments(true);
@@ -241,8 +267,8 @@ public class XPathParser {
       factory.setExpandEntityReferences(true);
 
       DocumentBuilder builder = factory.newDocumentBuilder();
-      builder.setEntityResolver(entityResolver);
-      builder.setErrorHandler(new ErrorHandler() {
+      builder.setEntityResolver(entityResolver); // 设置实体解析器 这里使用的是 XMLMapperEntityResolver
+      builder.setErrorHandler(new ErrorHandler() { // 实现 org.xml.sax 的 错误处理机制
         @Override
         public void error(SAXParseException exception) throws SAXException {
           throw exception;
@@ -258,6 +284,7 @@ public class XPathParser {
           // NOP
         }
       });
+      // 解析 XML 文件
       return builder.parse(inputSource);
     } catch (Exception e) {
       throw new BuilderException("Error creating document instance.  Cause: " + e, e);
@@ -268,6 +295,7 @@ public class XPathParser {
     this.validation = validation;
     this.entityResolver = entityResolver;
     this.variables = variables;
+    // 创建XPathFactory 对象
     XPathFactory factory = XPathFactory.newInstance();
     this.xpath = factory.newXPath();
   }

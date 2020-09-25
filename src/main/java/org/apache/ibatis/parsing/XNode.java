@@ -28,6 +28,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
+ * 主要为了动态值的替换
  * @author Clinton Begin
  */
 public class XNode {

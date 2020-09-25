@@ -15,6 +15,8 @@
  */
 package org.apache.ibatis.autoconstructor;
 
+// 对应 extensive_subject 表
+// 这是个复杂对象, 基本涵盖了各种数据类型的数据.
 public class ExtensiveSubject {
     private final byte aByte;
     private final short aShort;

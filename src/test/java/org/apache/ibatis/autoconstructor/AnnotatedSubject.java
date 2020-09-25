@@ -17,6 +17,7 @@ package org.apache.ibatis.autoconstructor;
 
 import org.apache.ibatis.annotations.AutomapConstructor;
 
+// 对应 Subject 表
 public class AnnotatedSubject {
   private final int id;
   private final String name;
@@ -32,6 +33,10 @@ public class AnnotatedSubject {
     this.weight = weight;
   }
 
+  /**
+   * @AutomapConstrutor 注解, 表示 MyBatis 查询后, 在创建 AnnotatedSubject 对象, 使用该构造方法.
+   * 实际场景中使用较少
+   */
   @AutomapConstructor
   public AnnotatedSubject(final int id, final String name, final int age, final Integer height, final Integer weight) {
     this.id = id;
