@@ -90,15 +90,21 @@ public class GenericTokenParser {
         }
         if (end == -1) {
           // close token was not found.
+          // closeToken 未找到，直接拼接
           builder.append(src, start, src.length - start);
+          // 修改 offset
           offset = src.length;
         } else {
+          // <x> closeToken 找到，将 expression 提交给 handler 处理 ，并将处理结果添加到 builder 中
           builder.append(handler.handleToken(expression.toString()));
+          // 修改 offset
           offset = end + closeToken.length();
         }
       }
+      // 继续，寻找开始的 openToken 的位置
       start = text.indexOf(openToken, offset);
     } while (start > -1);
+    // 拼接剩余的部分
     if (offset < src.length) {
       builder.append(src, offset, src.length - offset);
     }
