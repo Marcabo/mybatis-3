@@ -21,11 +21,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
+ * Enum 类型转换, 使用 Enum 类型的名称 ordinal 来转换,存储在数据库中的是 ordinal(序号)
+ *
  * @author Clinton Begin
  */
 public class EnumOrdinalTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
 
+  /**
+   * 枚举类
+   */
   private final Class<E> type;
+  /**
+   * {@link #type} 下所有的枚举
+   */
   private final E[] enums;
 
   public EnumOrdinalTypeHandler(Class<E> type) {
@@ -41,15 +49,18 @@ public class EnumOrdinalTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E
 
   @Override
   public void setNonNullParameter(PreparedStatement ps, int i, E parameter, JdbcType jdbcType) throws SQLException {
+    // 将 Enum 转换成 int 类型
     ps.setInt(i, parameter.ordinal());
   }
 
   @Override
   public E getNullableResult(ResultSet rs, String columnName) throws SQLException {
+    // 获得 int 的值
     int ordinal = rs.getInt(columnName);
     if (ordinal == 0 && rs.wasNull()) {
       return null;
     }
+    // 将 int 转换成 Enum 类型
     return toOrdinalEnum(ordinal);
   }
 

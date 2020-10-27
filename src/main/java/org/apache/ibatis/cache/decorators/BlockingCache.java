@@ -37,8 +37,11 @@ import org.apache.ibatis.cache.CacheException;
  */
 public class BlockingCache implements Cache {
 
+  // 阻塞等待超时时间
   private long timeout;
+  // 装饰的 Cache 对象
   private final Cache delegate;
+  // 缓存键与 CountDownLatch 对象的映射
   private final ConcurrentHashMap<Object, CountDownLatch> locks;
 
   public BlockingCache(Cache delegate) {
@@ -59,16 +62,21 @@ public class BlockingCache implements Cache {
   @Override
   public void putObject(Object key, Object value) {
     try {
+      // 添加缓存
       delegate.putObject(key, value);
     } finally {
+      // 释放锁
       releaseLock(key);
     }
   }
 
   @Override
   public Object getObject(Object key) {
+    // <1.1> 获得锁
     acquireLock(key);
+    // <1.2> 获得缓存值
     Object value = delegate.getObject(key);
+    // <1.3> 释放锁
     if (value != null) {
       releaseLock(key);
     }
@@ -78,6 +86,7 @@ public class BlockingCache implements Cache {
   @Override
   public Object removeObject(Object key) {
     // despite of its name, this method is called only to release locks
+    // 释放锁
     releaseLock(key);
     return null;
   }
@@ -87,6 +96,7 @@ public class BlockingCache implements Cache {
     delegate.clear();
   }
 
+  // 现在使用 CountDownLatch 来代替锁了
   private void acquireLock(Object key) {
     CountDownLatch newLatch = new CountDownLatch(1);
     while (true) {
@@ -96,12 +106,14 @@ public class BlockingCache implements Cache {
       }
       try {
         if (timeout > 0) {
+          // 获得锁,直到超时
           boolean acquired = latch.await(timeout, TimeUnit.MILLISECONDS);
           if (!acquired) {
             throw new CacheException(
                 "Couldn't get a lock in " + timeout + " for the key " + key + " at the cache " + delegate.getId());
           }
         } else {
+          // 如果没有设置超时时间,会一直等待
           latch.await();
         }
       } catch (InterruptedException e) {

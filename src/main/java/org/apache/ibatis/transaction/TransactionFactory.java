@@ -30,8 +30,10 @@ import org.apache.ibatis.session.TransactionIsolationLevel;
 public interface TransactionFactory {
 
   /**
+   * 设置工厂的属性
+   *
    * Sets transaction factory custom properties.
-   * @param props
+   * @param props 属性
    *          the new properties
    */
   default void setProperties(Properties props) {
@@ -39,6 +41,8 @@ public interface TransactionFactory {
   }
 
   /**
+   * 创建爱你 Transaction 事物
+   *
    * Creates a {@link Transaction} out of an existing connection.
    * @param conn Existing database connection
    * @return Transaction
