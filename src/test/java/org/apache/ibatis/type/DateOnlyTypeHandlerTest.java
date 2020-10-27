@@ -21,6 +21,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.sql.PreparedStatement;
 import java.util.Date;
 
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,9 @@ class DateOnlyTypeHandlerTest extends BaseTypeHandlerTest {
   @Test
   public void shouldSetParameter() throws Exception {
     TYPE_HANDLER.setParameter(ps, 1, DATE, null);
-    verify(ps).setDate(1, new java.sql.Date(DATE.getTime()));
+    PreparedStatement verify = verify(ps);
+
+    verify.setDate(1, new java.sql.Date(DATE.getTime()));
   }
 
   @Override
