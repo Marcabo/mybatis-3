@@ -32,9 +32,13 @@ import java.util.Properties;
  */
 public class Resources {
 
+  /**
+   * ClassLoaderwrapper 对象
+   */
   private static ClassLoaderWrapper classLoaderWrapper = new ClassLoaderWrapper();
 
   /**
+   * 字符集
    * Charset to use when calling getResourceAsReader.
    * null means use the system default.
    */
@@ -214,6 +218,7 @@ public class Resources {
    */
   public static InputStream getUrlAsStream(String urlString) throws IOException {
     URL url = new URL(urlString);
+    // 打开 Connection
     URLConnection conn = url.openConnection();
     return conn.getInputStream();
   }
