@@ -37,7 +37,7 @@ public class PropertyTokenizer implements Iterator<PropertyTokenizer> {
   private final String children;
 
   public PropertyTokenizer(String fullname) {
-    // <1> 初始化 name、children 字符串，使用 . 作为分隔
+    // <1> 初始化 name.children 字符串，使用 . 作为分隔
     int delim = fullname.indexOf('.');
     if (delim > -1) {
       name = fullname.substring(0, delim);

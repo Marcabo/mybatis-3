@@ -22,7 +22,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 匹配 Java 类型的注解
+ * 注解类 <br/>
+ *
+ * 用于指明该TypeHandler实现类能够处理的Java 类型的集合
  * The annotation that specify java types to map {@link TypeHandler}.
  *
  * <p>

@@ -32,14 +32,21 @@ import org.apache.ibatis.reflection.ParamNameUtil;
 import org.apache.ibatis.session.Configuration;
 
 /**
+ * 结果集，例如 <resultMap /> 解析后的对象
  * @author Clinton Begin
  */
 public class ResultMap {
+  // Configuration 对象
   private Configuration configuration;
 
+  // ResultMap 对象id
   private String id;
+  // 类型
   private Class<?> type;
+  // ResultMapping 集合
   private List<ResultMapping> resultMappings;
+  // ID ResultMapping 集合
+  // 当 idResultMappings 为空时，使用 {@link #resultMappings} 赋值
   private List<ResultMapping> idResultMappings;
   private List<ResultMapping> constructorResultMappings;
   private List<ResultMapping> propertyResultMappings;

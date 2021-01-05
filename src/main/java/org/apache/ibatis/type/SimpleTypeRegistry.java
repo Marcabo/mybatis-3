@@ -22,6 +22,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * 简单类型注册器 <br/>
+ *
+ * 用于判断哪些类是简单类型，和JAVA的基本数据类型不完全一样
  * @author Clinton Begin
  */
 public class SimpleTypeRegistry {

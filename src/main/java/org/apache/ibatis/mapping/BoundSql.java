@@ -61,6 +61,13 @@ public class BoundSql {
     return parameterObject;
   }
 
+  /**
+   * 判断 additionalParameters 是否含有 name(属性表达式) 属性
+   * eg: name = map  那么就判断 additionalParameters 是否含有 名为 map 的属性
+   * 注意: 对于 name = map.key1 这种表达式, 只要 additionalParameters 有 map 属性则返回 true
+   * @param name 对象的属性表达式
+   * @return
+   */
   public boolean hasAdditionalParameter(String name) {
     String paramName = new PropertyTokenizer(name).getName();
     return additionalParameters.containsKey(paramName);

@@ -464,7 +464,7 @@ public final class TypeHandlerRegistry {
       if (map == null || map == NULL_TYPE_HANDLER_MAP) { // 如果不存在，则进行创建
         map = new HashMap<>();
       }
-      // 添加到 handler 中 map 中
+      // 添加 handler 到 map 中
       map.put(jdbcType, handler);
       typeHandlerMap.put(javaType, map);
     }

@@ -33,6 +33,10 @@ import org.apache.ibatis.io.ResolverUtil;
 import org.apache.ibatis.io.Resources;
 
 /**
+ * 类别名注册器
+ * <br />
+ * 用于取代复杂的类型全限定名，mybatis中用于映射器配置文件中进行参数类型与返回结果类型的设置。默认完成了大量基础类型别名的注册。
+ *
  * @author Clinton Begin
  */
 public class TypeAliasRegistry {
@@ -163,6 +167,10 @@ public class TypeAliasRegistry {
     }
   }
 
+  /**
+   * 给类型注册别名, 别名默认为 简单类名, 如果类名上有 {@Code Alias} 则使用注解属性为别名名称
+   * @param type
+   */
   public void registerAlias(Class<?> type) {
     // <1> 默认为, 简单类名
     String alias = type.getSimpleName();
@@ -175,6 +183,11 @@ public class TypeAliasRegistry {
     registerAlias(alias, type);
   }
 
+  /**
+   * 给类型注册别名
+   * @param alias 别名
+   * @param value 类型
+   */
   public void registerAlias(String alias, Class<?> value) {
     if (alias == null) {
       throw new TypeException("The parameter alias cannot be null");
