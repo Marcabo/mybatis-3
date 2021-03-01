@@ -100,12 +100,16 @@ public class TrimSqlNode implements SqlNode {
     }
 
     public void applyAll() {
+      // <1> trim 掉多余的空格, 生成新的 sqlBuffer 对象
       sqlBuffer = new StringBuilder(sqlBuffer.toString().trim());
+      // <2> 将 sqlBuffer 大写, 生成新的 trimmedUppercaseSql 对象
       String trimmedUppercaseSql = sqlBuffer.toString().toUpperCase(Locale.ENGLISH);
+      // <3> 应用 TrimSqlNode 的 trim 逻辑
       if (trimmedUppercaseSql.length() > 0) {
         applyPrefix(sqlBuffer, trimmedUppercaseSql);
         applySuffix(sqlBuffer, trimmedUppercaseSql);
       }
+      // 将结果, 添加到 delegate 中
       delegate.appendSql(sqlBuffer.toString());
     }
 
